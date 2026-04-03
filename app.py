@@ -42,6 +42,23 @@ def home():
         today_events=today_events
     )
 
+# ------------------- Profile Edit ------------------- #
+@app.route("/profile", methods=["GET", "POST"])
+def profile():
+    if "user" not in session:
+        return redirect("/login")
+    users = load_users()
+    current_user = next(u for u in users["users"] if u["username"] == session["user"])
+    
+    if request.method == "POST":
+        current_user["name"] = request.form["name"]
+        current_user["branch"] = request.form["branch"]
+        current_user["section"] = request.form["section"]
+        current_user["photo"] = request.form["photo"]
+        save_users(users)
+        return redirect("/")
+    return render_template("profile.html", user=current_user)
+
 # ------------------- Register ------------------- #
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -50,7 +67,11 @@ def register():
         users["users"].append({
             "username": request.form["username"],
             "password": request.form["password"],
-            "role": "student"
+            "role": "student",
+            "name": request.form.get("name", ""),
+            "branch": request.form.get("branch", ""),
+            "section": request.form.get("section", ""),
+            "photo": request.form.get("photo", "https://i.pravatar.cc/150?img=3")
         })
         save_users(users)
         return redirect("/login")
@@ -97,6 +118,16 @@ def add():
     save_events(data)
     return redirect("/")
 
+# ------------------- Delete Event (Admin Only) ------------------- #
+@app.route("/delete/<int:id>")
+def delete(id):
+    if session.get("role") != "admin":
+        return "Access Denied"
+    data = load_events()
+    data["events"] = [e for e in data["events"] if e["id"] != id]
+    save_events(data)
+    return redirect("/")
+
 # ------------------- Like Event (All Users) ------------------- #
 @app.route("/like/<int:id>")
 def like(id):
@@ -107,25 +138,5 @@ def like(id):
     save_events(data)
     return redirect("/")
 
-# ------------------- Delete Event (Admin Only) ------------------- #
-@app.route("/delete/<int:id>")
-def delete(id):
-    if session.get("role") != "admin":
-        return "Access Denied"
-
-    data = load_events()
-    data["events"] = [e for e in data["events"] if e["id"] != id]
-    save_events(data)
-    return redirect("/")
-
-# ------------------- Search Events ------------------- #
-@app.route("/search", methods=["POST"])
-def search():
-    data = load_events()
-    query = request.form["query"].lower()
-    filtered = [e for e in data["events"] if query in e["name"].lower()]
-    return render_template("index.html", events=filtered, user=session["user"], role=session.get("role"), today_date=date.today().strftime("%Y-%m-%d"), today_events=[])
-
-# ------------------- Run App ------------------- #
 if __name__ == "__main__":
     app.run(debug=True)
