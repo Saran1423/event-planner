@@ -1,1 +1,1 @@
-# event-planner
+# CMR_EVENTS
