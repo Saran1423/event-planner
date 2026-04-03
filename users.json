@@ -3,7 +3,11 @@
     {
       "username": "admin",
       "password": "admin123",
-      "role": "admin"
+      "role": "admin",
+      "name": "Admin",
+      "branch": "",
+      "section": "",
+      "photo": "https://i.pravatar.cc/150?img=12"
     }
   ]
 }
