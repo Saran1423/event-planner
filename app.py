@@ -7,8 +7,11 @@ app.secret_key = "secret123"
 
 # ------------------- Load & Save Events ------------------- #
 def load_events():
-    with open("events.json", "r") as f:
-        return json.load(f)
+    try:
+        with open("events.json", "r") as f:
+            return json.load(f)
+    except:
+        return {"events": []}
 
 def save_events(data):
     with open("events.json", "w") as f:
@@ -16,8 +19,11 @@ def save_events(data):
 
 # ------------------- Load & Save Users ------------------- #
 def load_users():
-    with open("users.json", "r") as f:
-        return json.load(f)
+    try:
+        with open("users.json", "r") as f:
+            return json.load(f)
+    except:
+        return {"users": []}
 
 def save_users(data):
     with open("users.json", "w") as f:
@@ -28,15 +34,18 @@ def save_users(data):
 def home():
     if "user" not in session:
         return redirect("/login")
-    
+
     all_events = load_events()["events"]
+    users_list = load_users()["users"]
+    current_user = next((u for u in users_list if u["username"] == session["user"]), None)
+
     today_str = date.today().strftime("%Y-%m-%d")
     today_events = [e for e in all_events if e["date"] == today_str]
 
     return render_template(
         "index.html",
         events=all_events,
-        user=session["user"],
+        user=current_user,
         role=session.get("role"),
         today_date=today_str,
         today_events=today_events
@@ -47,33 +56,35 @@ def home():
 def profile():
     if "user" not in session:
         return redirect("/login")
-    users = load_users()
-    current_user = next(u for u in users["users"] if u["username"] == session["user"])
-    
+
+    users_data = load_users()
+    current_user = next((u for u in users_data["users"] if u["username"] == session["user"]), None)
+
     if request.method == "POST":
-        current_user["name"] = request.form["name"]
-        current_user["branch"] = request.form["branch"]
-        current_user["section"] = request.form["section"]
-        current_user["photo"] = request.form["photo"]
-        save_users(users)
+        current_user["name"] = request.form.get("name", current_user.get("name", ""))
+        current_user["branch"] = request.form.get("branch", current_user.get("branch", ""))
+        current_user["section"] = request.form.get("section", current_user.get("section", ""))
+        current_user["photo"] = request.form.get("photo", current_user.get("photo", "https://i.pravatar.cc/150"))
+        save_users(users_data)
         return redirect("/")
+
     return render_template("profile.html", user=current_user)
 
 # ------------------- Register ------------------- #
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        users = load_users()
-        users["users"].append({
+        users_data = load_users()
+        users_data["users"].append({
             "username": request.form["username"],
             "password": request.form["password"],
             "role": "student",
             "name": request.form.get("name", ""),
             "branch": request.form.get("branch", ""),
             "section": request.form.get("section", ""),
-            "photo": request.form.get("photo", "https://i.pravatar.cc/150?img=3")
+            "photo": request.form.get("photo", "https://i.pravatar.cc/150")
         })
-        save_users(users)
+        save_users(users_data)
         return redirect("/login")
     return render_template("register.html")
 
@@ -81,8 +92,8 @@ def register():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        users = load_users()
-        for u in users["users"]:
+        users_data = load_users()
+        for u in users_data["users"]:
             if u["username"] == request.form["username"] and u["password"] == request.form["password"]:
                 session["user"] = u["username"]
                 session["role"] = u.get("role", "student")
@@ -105,12 +116,12 @@ def add():
     data = load_events()
     new_event = {
         "id": len(data["events"]) + 1,
-        "name": request.form["name"],
-        "date": request.form["date"],
-        "time": request.form["time"],
-        "location": request.form["location"],
-        "image": request.form["image"],
-        "description": request.form["description"],
+        "name": request.form.get("name", ""),
+        "date": request.form.get("date", ""),
+        "time": request.form.get("time", ""),
+        "location": request.form.get("location", ""),
+        "image": request.form.get("image", "https://via.placeholder.com/300x180"),
+        "description": request.form.get("description", ""),
         "type": request.form.get("type", "event"),
         "likes": 0
     }
