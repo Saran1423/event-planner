@@ -1,6 +1,12 @@
 from flask import Flask, render_template, request, redirect, session
 import json
 import os
+import logging
+
+# ------------------------------
+# Logging for debugging
+# ------------------------------
+logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
 app.secret_key = "secret123"
@@ -10,22 +16,21 @@ app.secret_key = "secret123"
 # ------------------------------
 def load_users():
     if not os.path.exists("users.json"):
-        # Create default admin if file missing
-        with open("users.json", "w") as f:
-            default = {
-                "users": [
-                    {
-                        "username": "admin",
-                        "password": "admin123",
-                        "role": "admin",
-                        "name": "Admin",
-                        "branch": "CSE",
-                        "section": "A",
-                        "photo": "https://cdn-icons-png.flaticon.com/512/149/149071.png"
-                    }
-                ]
-            }
-            json.dump(default, f, indent=4)
+        # Create default admin if missing
+        default = {
+            "users": [
+                {
+                    "username": "admin",
+                    "password": "admin123",
+                    "role": "admin",
+                    "name": "Admin",
+                    "branch": "CSE",
+                    "section": "A",
+                    "photo": "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                }
+            ]
+        }
+        save_users(default)
     with open("users.json", "r") as f:
         return json.load(f)
 
@@ -35,8 +40,7 @@ def save_users(data):
 
 def load_events():
     if not os.path.exists("events.json"):
-        with open("events.json", "w") as f:
-            json.dump({"events": []}, f, indent=4)
+        save_events({"events": []})
     with open("events.json", "r") as f:
         return json.load(f)
 
@@ -51,13 +55,18 @@ def save_events(data):
 def home():
     if "user" not in session:
         return redirect("/login")
+
     users = load_users()
     current_user = next((u for u in users["users"] if u["username"] == session["user"]), None)
     if not current_user:
-        return redirect("/login")  # safety check
+        return redirect("/login")
 
-    events = load_events()
-    return render_template("index.html", events=events["events"], user=current_user, role=current_user.get("role", "student"))
+    events_data = load_events()
+    events_list = events_data.get("events", [])
+    return render_template("index.html",
+                           events=events_list,
+                           user=current_user,
+                           role=current_user.get("role", "student"))
 
 # ------------------------------
 # Register
@@ -112,34 +121,35 @@ def add():
 
     data = load_events()
     new_event = {
-        "id": len(data["events"]) + 1,
-        "name": request.form["name"],
-        "date": request.form["date"],
-        "time": request.form["time"],
-        "location": request.form["location"],
+        "id": len(data.get("events", [])) + 1,
+        "name": request.form.get("name", "Untitled Event"),
+        "date": request.form.get("date", ""),
+        "time": request.form.get("time", ""),
+        "location": request.form.get("location", ""),
         "description": request.form.get("description", ""),
         "image": request.form.get("image", ""),
         "likes": 0
     }
-    data["events"].append(new_event)
+    data.setdefault("events", []).append(new_event)
     save_events(data)
     return redirect("/")
 
 # ------------------------------
 # Delete Event (Admin Only)
 # ------------------------------
-@app.route("/delete/<int:id>")
-def delete(id):
+@app.route("/delete/<int:event_id>")
+def delete(event_id):
     if session.get("role") != "admin":
         return "Access Denied"
 
     data = load_events()
-    data["events"] = [e for e in data["events"] if e["id"] != id]
+    events = data.get("events", [])
+    data["events"] = [e for e in events if e.get("id") != event_id]
     save_events(data)
     return redirect("/")
 
 # ------------------------------
-# Profile Update
+# Profile Settings
 # ------------------------------
 @app.route("/settings", methods=["GET", "POST"])
 def settings():
@@ -152,11 +162,11 @@ def settings():
         return redirect("/login")
 
     if request.method == "POST":
-        current_user["name"] = request.form.get("name", current_user["name"])
-        current_user["branch"] = request.form.get("branch", current_user["branch"])
-        current_user["section"] = request.form.get("section", current_user["section"])
-        current_user["photo"] = request.form.get("photo", current_user["photo"])
-        current_user["password"] = request.form.get("password", current_user["password"])
+        current_user["name"] = request.form.get("name", current_user.get("name", ""))
+        current_user["branch"] = request.form.get("branch", current_user.get("branch", ""))
+        current_user["section"] = request.form.get("section", current_user.get("section", ""))
+        current_user["photo"] = request.form.get("photo", current_user.get("photo", "https://cdn-icons-png.flaticon.com/512/149/149071.png"))
+        current_user["password"] = request.form.get("password", current_user.get("password", ""))
         save_users(users)
         return redirect("/")
 
