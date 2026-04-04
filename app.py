@@ -1,8 +1,11 @@
-from flask import Flask, render_template, request, redirect, session, url_for
+from flask import Flask, render_template, request, redirect, session
 import json
 import os
 import logging
 
+# ------------------------------
+# Logging for debugging
+# ------------------------------
 logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
@@ -11,8 +14,12 @@ app.secret_key = "secret123"
 # ------------------------------
 # JSON Helpers
 # ------------------------------
+USERS_FILE = "users.json"
+EVENTS_FILE = "events.json"
+
 def load_users():
-    if not os.path.exists("users.json"):
+    if not os.path.exists(USERS_FILE):
+        logging.info(f"{USERS_FILE} not found, creating default admin user...")
         default = {
             "users": [
                 {
@@ -27,21 +34,22 @@ def load_users():
             ]
         }
         save_users(default)
-    with open("users.json", "r") as f:
+    with open(USERS_FILE, "r") as f:
         return json.load(f)
 
 def save_users(data):
-    with open("users.json", "w") as f:
+    with open(USERS_FILE, "w") as f:
         json.dump(data, f, indent=4)
 
 def load_events():
-    if not os.path.exists("events.json"):
+    if not os.path.exists(EVENTS_FILE):
+        logging.info(f"{EVENTS_FILE} not found, creating empty events file...")
         save_events({"events": []})
-    with open("events.json", "r") as f:
+    with open(EVENTS_FILE, "r") as f:
         return json.load(f)
 
 def save_events(data):
-    with open("events.json", "w") as f:
+    with open(EVENTS_FILE, "w") as f:
         json.dump(data, f, indent=4)
 
 # ------------------------------
@@ -55,7 +63,6 @@ def home():
     users = load_users()
     current_user = next((u for u in users["users"] if u["username"] == session["user"]), None)
     if not current_user:
-        session.clear()
         return redirect("/login")
 
     events_data = load_events()
@@ -73,10 +80,8 @@ def register():
     if request.method == "POST":
         users = load_users()
         username = request.form["username"]
-
-        # Check if username exists
         if any(u["username"] == username for u in users["users"]):
-            return "Username already exists. Please choose another."
+            return "Username already exists. Please choose another.", 400
 
         new_user = {
             "username": username,
@@ -99,15 +104,12 @@ def register():
 def login():
     if request.method == "POST":
         users = load_users()
-        username = request.form["username"]
-        password = request.form["password"]
-
         for u in users["users"]:
-            if u["username"] == username and u["password"] == password:
+            if u["username"] == request.form["username"] and u["password"] == request.form["password"]:
                 session["user"] = u["username"]
                 session["role"] = u.get("role", "student")
                 return redirect("/")
-        return "Invalid username or password"
+        return "Invalid credentials", 401
     return render_template("login.html")
 
 # ------------------------------
@@ -124,7 +126,7 @@ def logout():
 @app.route("/add", methods=["POST"])
 def add():
     if session.get("role") != "admin":
-        return "Access Denied"
+        return "Access Denied", 403
 
     data = load_events()
     new_event = {
@@ -147,7 +149,7 @@ def add():
 @app.route("/delete/<int:event_id>")
 def delete(event_id):
     if session.get("role") != "admin":
-        return "Access Denied"
+        return "Access Denied", 403
 
     data = load_events()
     events = data.get("events", [])
@@ -166,7 +168,6 @@ def settings():
     users = load_users()
     current_user = next((u for u in users["users"] if u["username"] == session["user"]), None)
     if not current_user:
-        session.clear()
         return redirect("/login")
 
     if request.method == "POST":
@@ -181,21 +182,9 @@ def settings():
     return render_template("settings.html", user=current_user)
 
 # ------------------------------
-# Like Event
-# ------------------------------
-@app.route("/like/<int:event_id>")
-def like(event_id):
-    data = load_events()
-    for e in data.get("events", []):
-        if e.get("id") == event_id:
-            e["likes"] += 1
-            break
-    save_events(data)
-    return redirect("/")
-
-# ------------------------------
 # Run App
 # ------------------------------
 if __name__ == "__main__":
+    # Render uses PORT env variable
     port = int(os.environ.get("PORT", 10000))
     app.run(debug=True, host="0.0.0.0", port=port)
