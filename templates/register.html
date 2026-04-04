@@ -12,9 +12,10 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     margin: 0;
     color: white;
+    padding: 20px;
 }
 
 .card {
@@ -22,13 +23,13 @@ body {
     padding: 30px;
     border-radius: 10px;
     text-align: center;
-    width: 300px;
+    width: 350px;
 }
 
 input {
     width: 90%;
     padding: 10px;
-    margin: 10px;
+    margin: 8px;
     border: none;
     border-radius: 5px;
 }
@@ -40,6 +41,7 @@ button {
     background: #ff7e5f;
     color: white;
     cursor: pointer;
+    margin-top: 10px;
 }
 
 button:hover {
@@ -50,6 +52,12 @@ a {
     color: #ff7e5f;
     text-decoration: none;
 }
+
+.error {
+    color: #ff6b6b;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
 </style>
 </head>
 
@@ -58,10 +66,18 @@ a {
 <div class="card">
 <h2>Register</h2>
 
+{% if error %}
+<p class="error">{{ error }}</p>
+{% endif %}
+
 <form method="POST">
-<input name="username" placeholder="Username" required>
-<input name="password" type="password" placeholder="Password" required>
-<button>Register</button>
+    <input name="username" placeholder="Username" required>
+    <input name="password" type="password" placeholder="Password" required>
+    <input name="name" placeholder="Full Name">
+    <input name="branch" placeholder="Branch (e.g. CSE)">
+    <input name="section" placeholder="Section (e.g. A)">
+    <input name="photo" placeholder="Photo URL (optional)">
+    <button>Register</button>
 </form>
 
 <p>Already have an account? <a href="/login">Login</a></p>

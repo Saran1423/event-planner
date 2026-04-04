@@ -1,13 +1,22 @@
 {
-  "users": [
-    {
-      "username": "admin",
-      "password": "admin123",
-      "role": "admin",
-      "name": "Admin",
-      "branch": "",
-      "section": "",
-      "photo": "https://cdn-icons-png.flaticon.com/512/149/149071.png"
-    }
-  ]
+    "users": [
+        {
+            "username": "admin",
+            "password": "admin123",
+            "role": "admin",
+            "name": "Admin",
+            "branch": "CSE",
+            "section": "A",
+            "photo": "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+        },
+        {
+            "username": "Naveen1234",
+            "password": "Harshitha@19",
+            "role": "student",
+            "name": "Naveen",
+            "branch": "CSE",
+            "section": "B",
+            "photo": "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+        }
+    ]
 }

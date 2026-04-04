@@ -2,14 +2,71 @@
 <html>
 <head>
     <title>Settings</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            padding: 40px;
+        }
+        .card {
+            max-width: 500px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        button {
+            background: #1f3c88;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        a {
+            display: inline-block;
+            margin-top: 15px;
+            text-decoration: none;
+            color: #1f3c88;
+        }
+    </style>
 </head>
 <body>
-<h1>Settings for {{ user.username }}</h1>
-<form action="/settings" method="POST">
-    <label>Change Password:</label><br>
-    <input type="password" name="password" value="{{ user.password }}"><br>
-    <button type="submit">Save</button>
-</form>
-<a href="/">Back to Dashboard</a>
+
+<div class="card">
+    <h2>Settings for {{ user.username }}</h2>
+
+    <form action="/settings" method="POST">
+        <label>Name:</label>
+        <input type="text" name="name" value="{{ user.name }}">
+
+        <label>Branch:</label>
+        <input type="text" name="branch" value="{{ user.branch }}">
+
+        <label>Section:</label>
+        <input type="text" name="section" value="{{ user.section }}">
+
+        <label>Photo URL:</label>
+        <input type="text" name="photo" value="{{ user.photo }}">
+
+        <label>Change Password:</label>
+        <input type="password" name="password" value="{{ user.password }}">
+
+        <button type="submit">Save</button>
+    </form>
+
+    <a href="/">Back to Dashboard</a>
+</div>
+
 </body>
 </html>

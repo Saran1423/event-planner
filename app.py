@@ -1,11 +1,8 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, session, url_for
 import json
 import os
 import logging
 
-# ------------------------------
-# Logging for debugging
-# ------------------------------
 logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
@@ -16,7 +13,6 @@ app.secret_key = "secret123"
 # ------------------------------
 def load_users():
     if not os.path.exists("users.json"):
-        # Create default admin if missing
         default = {
             "users": [
                 {
@@ -59,13 +55,14 @@ def home():
     users = load_users()
     current_user = next((u for u in users["users"] if u["username"] == session["user"]), None)
     if not current_user:
+        session.clear()
         return redirect("/login")
 
     events_data = load_events()
     events_list = events_data.get("events", [])
     return render_template("index.html",
                            events=events_list,
-                           user=current_user,
+                           users=current_user,
                            role=current_user.get("role", "student"))
 
 # ------------------------------
@@ -75,8 +72,14 @@ def home():
 def register():
     if request.method == "POST":
         users = load_users()
+        username = request.form["username"]
+
+        # Check if username exists
+        if any(u["username"] == username for u in users["users"]):
+            return "Username already exists. Please choose another."
+
         new_user = {
-            "username": request.form["username"],
+            "username": username,
             "password": request.form["password"],
             "role": "student",
             "name": request.form.get("name", ""),
@@ -96,11 +99,15 @@ def register():
 def login():
     if request.method == "POST":
         users = load_users()
+        username = request.form["username"]
+        password = request.form["password"]
+
         for u in users["users"]:
-            if u["username"] == request.form["username"] and u["password"] == request.form["password"]:
+            if u["username"] == username and u["password"] == password:
                 session["user"] = u["username"]
                 session["role"] = u.get("role", "student")
                 return redirect("/")
+        return "Invalid username or password"
     return render_template("login.html")
 
 # ------------------------------
@@ -159,6 +166,7 @@ def settings():
     users = load_users()
     current_user = next((u for u in users["users"] if u["username"] == session["user"]), None)
     if not current_user:
+        session.clear()
         return redirect("/login")
 
     if request.method == "POST":
@@ -173,7 +181,21 @@ def settings():
     return render_template("settings.html", user=current_user)
 
 # ------------------------------
+# Like Event
+# ------------------------------
+@app.route("/like/<int:event_id>")
+def like(event_id):
+    data = load_events()
+    for e in data.get("events", []):
+        if e.get("id") == event_id:
+            e["likes"] += 1
+            break
+    save_events(data)
+    return redirect("/")
+
+# ------------------------------
 # Run App
 # ------------------------------
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=10000)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(debug=True, host="0.0.0.0", port=port)

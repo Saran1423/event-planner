@@ -22,7 +22,7 @@ body {
     padding: 30px;
     border-radius: 10px;
     text-align: center;
-    width: 300px;
+    width: 350px;
 }
 
 input {
@@ -50,6 +50,12 @@ a {
     color: #ff7e5f;
     text-decoration: none;
 }
+
+.error {
+    color: #ff6b6b;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
 </style>
 </head>
 
@@ -58,10 +64,14 @@ a {
 <div class="card">
 <h2>Login</h2>
 
+{% if error %}
+<p class="error">{{ error }}</p>
+{% endif %}
+
 <form method="POST">
-<input name="username" placeholder="Username" required>
-<input name="password" type="password" placeholder="Password" required>
-<button>Login</button>
+    <input name="username" placeholder="Username" required>
+    <input name="password" type="password" placeholder="Password" required>
+    <button>Login</button>
 </form>
 
 <p>Don't have an account? <a href="/register">Register</a></p>
