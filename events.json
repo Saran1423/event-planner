@@ -1,16 +1,6 @@
 {
     "events": [
         {
-            "id": 1,
-            "name": "Tech Fest 2026",
-            "date": "2026-04-10",
-            "time": "10:43 AM",
-            "location": "Auditorium",
-            "description": "Annual college technology fest.",
-            "image": "/static/uploads/1775379580_pexels-pixabay-36717.jpg",
-            "likes": 0
-        },
-        {
             "id": 2,
             "name": "Cultural Night",
             "date": "2026-04-15",
