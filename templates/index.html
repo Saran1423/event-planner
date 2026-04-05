@@ -154,6 +154,78 @@ body {
     padding: 20px;
     border-radius: 16px;
 }
+/* MOBILE STYLE MODAL CARD */
+.modal-card {
+    width: 100%;
+    max-width: 420px;
+    border-radius: 20px;
+    padding: 20px;
+    background: #f5f4ee;
+}
+
+.modal-card h3 {
+    margin-bottom: 20px;
+}
+
+/* INPUT STYLE LIKE IMAGE */
+.modal-card input,
+.modal-card textarea {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    background: #e9e6df;
+    margin-bottom: 15px;
+    font-size: 14px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+/* BUTTON LIKE IMAGE */
+.modal-card button[type="submit"] {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    background: #118a4e;
+    color: white;
+    font-weight: 600;
+    margin-top: 10px;
+}
+.modal-card button[type="cancel"] {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    background: #b2d8c5;
+    color: rgb(56, 55, 55);
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+/* DELETE BUTTON */
+.modal-card button[type="delete"] {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    background: #ed5205;
+    color: rgb(56, 55, 55);
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+/* MOBILE FULLSCREEN */
+@media(max-width:600px){
+    #modal {
+        align-items: flex-end;
+    }
+
+    .modal-card {
+        border-radius: 20px 20px 0 0;
+        width: 100%;
+    }
+}
 
 /* MOBILE */
 @media(max-width: 900px){
@@ -229,6 +301,14 @@ body {
                         <div class="info">
                             <strong>{{ e.name }}</strong>
                             <p>{{ e.date }} - {{ e.time }}</p>
+
+                            <p style="margin:4px 0; font-size:20px; color:#000000;">
+                                 📌{{ e.location }}
+                            </p>
+
+                            <p style="margin:4px 0; font-size:16px; color:#777;">
+                                👉 {{ e.description }}
+                            </p>
                         </div>
                     </div>
                 {% endfor %}
@@ -305,36 +385,121 @@ body {
     </div>
 </div>
 
+<!-- MODAL -->
+<div id="modal" style="display:none; position:fixed; inset:0; backdrop-filter: blur(8px); background:rgba(0,0,0,0.3); justify-content:center; align-items:center; z-index:1000;">
+    
+    <div class="modal-card">
+
+        <h3 id="modalTitle">Add Event</h3>
+
+        <form id="eventForm" method="POST" enctype="multipart/form-data">
+
+            <input type="text" id="name" name="name" placeholder="Event Name" required>
+
+            <input type="date" id="date" name="date" required>
+
+            <input type="time" id="time" name="time" required>
+
+            <input type="text" id="location" name="location" placeholder="Location">
+
+            <input type="file" id="image" name="image" accept="image/*">
+
+            <textarea id="description" name="description" placeholder="Description"></textarea>
+
+            <div style="display:flex; gap:10px; justify-content:space-between;">
+                <button type="submit" id="saveBtn">Add</button>
+                <button type="cancel" onclick="closeModal()">Cancel</button>
+                <button type="delete" id="deleteBtn" style="display:none; background:red; color:white;">Delete</button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
 <script>
 
-/* FULLCALENDAR */
+let editingId = null;
+let eventsData = []; 
+
+/* INIT CALENDAR */
 document.addEventListener('DOMContentLoaded', function () {
+
+    {% for e in events %}
+    eventsData.push({
+        id: {{ e.id }},
+        name: "{{ e.name }}",
+        date: "{{ e.date }}",
+        time: "{{ e.time }}",
+        location: "{{ e.location }}",
+        description: "{{ e.description }}",
+        image: "{{ e.image }}"
+    });
+    {% endfor %}
+
+    renderCalendar();
+});
+
+/* CALENDAR */
+function renderCalendar(){
+    document.getElementById('calendar').innerHTML = "";
+
     var calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
         initialView: 'dayGridMonth',
-        editable: true,
         height: "auto",
-        events: [
-            {% for e in events %}
-            { title: "{{ e.name }}", start: "{{ e.date }}" },
-            {% endfor %}
-        ],
-
-        eventDrop: function(info){
-            alert("Event moved to: " + info.event.start.toISOString());
-        }
+        events: eventsData.map(e => ({
+            title: e.name,
+            start: e.date
+        }))
     });
 
     calendar.render();
-});
+}
 
-/* MODALS */
+/* OPEN ADD */
 function openModal(){
+    editingId = null;
+
+    document.getElementById("modalTitle").innerText = "Add Event";
+    document.getElementById("saveBtn").innerText = "Add";
+    document.getElementById("deleteBtn").style.display = "none";
+
+    document.getElementById("eventForm").action = "/add"; // connect backend
+    document.getElementById("eventForm").reset();
+
     document.getElementById("modal").style.display = "flex";
 }
 
+/* OPEN EDIT */
 function openEditModal(id, name, date, time, location, desc){
-    document.getElementById("editForm").action = "/edit/" + id;
+    editingId = id;
+
+    document.getElementById("modalTitle").innerText = "Edit Event";
+    document.getElementById("saveBtn").innerText = "Update";
+    document.getElementById("deleteBtn").style.display = "block";
+    document.getElementById("eventForm").action = "/edit/" + id;
+    document.getElementById("name").value = name;
+    document.getElementById("date").value = date;
+    document.getElementById("time").value = time;
+    document.getElementById("location").value = location;
+    document.getElementById("description").value = desc;
+
+    document.getElementById("modal").style.display = "flex";
 }
+
+/* CLOSE */
+function closeModal(){
+    document.getElementById("modal").style.display = "none";
+}
+
+
+
+/* DELETE */
+document.getElementById("deleteBtn").addEventListener("click", function(){
+    if(editingId){
+        window.location.href = "/delete/" + editingId; // 🔥 backend delete
+    }
+});
 
 </script>
 
