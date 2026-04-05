@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+
+<style>
+
+body {
+    margin:0;
+    font-family:'Inter', sans-serif;
+    background:#f4f5fb;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width:230px;
+    height:100vh;
+    position:fixed;
+    background:#ffffff;
+    padding:20px;
+}
+
+.logo {
+    font-size:20px;
+    font-weight:bold;
+    margin-bottom:30px;
+}
+
+.nav {
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.nav a {
+    padding:12px;
+    border-radius:10px;
+    text-decoration:none;
+    color:#555;
+}
+
+.nav a.active, .nav a:hover {
+    background:#ede9fe;
+    color:#6c3ef4;
+}
+
+/* CONTENT */
+.content {
+    margin-left:250px;
+    padding:20px;
+}
+
+/* CARDS */
+.card {
+    background:#eef0ff;
+    border-radius:16px;
+    padding:20px;
+}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+    .sidebar{
+        width:100%;
+        height:auto;
+        position:relative;
+    }
+    .content{
+        margin-left:0;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+    <div class="logo">disera</div>
+
+    <div class="nav">
+        <a href="/" class="active">Dashboard</a>
+        <a href="/calendar">Calendar</a>
+        <a href="/settings">Profile</a>
+
+        {% if role == 'admin' %}
+        <a href="#" onclick="openModal()">+ Add Event</a>
+        {% endif %}
+
+        <a href="/logout">Logout</a>
+    </div>
+</div>
+
+<div class="content">
+{% block content %}{% endblock %}
+</div>
+
+</body>
+</html>

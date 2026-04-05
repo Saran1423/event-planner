@@ -7,16 +7,16 @@
             "name": "Admin",
             "branch": "CSE",
             "section": "A",
-            "photo": "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+            "photo": ""
         },
         {
-            "username": "Naveen1234",
-            "password": "Harshitha@19",
+            "username": "naveen123",
+            "password": "naveen123",
             "role": "student",
-            "name": "Naveen",
-            "branch": "CSE",
-            "section": "B",
-            "photo": "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+            "name": "Naveen Kumar R",
+            "branch": "cse",
+            "section": "b",
+            "photo": ""
         }
     ]
 }

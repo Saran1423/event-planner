@@ -1,203 +1,342 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>College Dashboard</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<title>Dashboard</title>
 
-    <style>
-        body {
-            background-color: #f5f7fa;
-        }
-        .sidebar {
-            height: 100vh;
-            background-color: #1f3c88;
-            color: #fff;
-            padding-top: 20px;
-            position: fixed;
-            width: 250px;
-        }
-        .sidebar a {
-            color: #fff;
-            text-decoration: none;
-            display: block;
-            padding: 12px 20px;
-            margin: 5px 0;
-            border-radius: 5px;
-        }
-        .sidebar a:hover {
-            background-color: #3e5fb7;
-        }
-        .content {
-            margin-left: 260px;
-            padding: 20px;
-        }
-        .navbar-custom {
-            background-color: #fff;
-            padding: 10px 20px;
-            box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .profile-img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            cursor: pointer;
-        }
-        .event-card {
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            overflow: hidden;
-            transition: transform 0.2s;
-        }
-        .event-card:hover {
-            transform: translateY(-5px);
-        }
-        .event-card img {
-            height: 180px;
-            width: 100%;
-            object-fit: cover;
-        }
-        .event-card .card-body {
-            background-color: #fff;
-        }
-        .btn-like {
-            background-color: #ff4d6d;
-            color: #fff;
-        }
-        .btn-delete {
-            background-color: #f44336;
-            color: #fff;
-        }
-        .college-banner {
-            width: 100%;
-            max-height: 250px;
-            object-fit: cover;
-            border-radius: 12px;
-            margin-bottom: 20px;
-        }
-    </style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+
+<style>
+
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background: #f4f5fb;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 230px;
+    height: 100vh;
+    position: fixed;
+    background: #fff;
+    padding: 20px;
+    border-right: 1px solid #eee;
+}
+
+.logo {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 30px;
+}
+
+.nav-item {
+    padding: 12px 15px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    color: #555;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.nav-item:hover {
+    background: #ede9fe;
+    color: #6c3ef4;
+}
+.nav-item.active {
+    background: #ede9fe;
+    color: #6c3ef4;
+    
+}
+
+/* CONTENT */
+.content {
+    margin-left: 250px;
+    padding: 20px;
+}
+
+/* HEADER */
+.header {
+    background: linear-gradient(135deg, #6c3ef4, #a66cff);
+    color: white;
+    padding: 25px;
+    border-radius: 18px;
+    margin-bottom: 20px;
+}
+
+/* GRID */
+.main-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+}
+
+/* EVENTS */
+.events {
+    background: #eef0ff;
+    padding: 20px;
+    border-radius: 16px;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 25px 0 10px;
+}
+
+/* 2 PER ROW */
+.event-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+/* CARD */
+.event-card {
+    border-radius: 14px;
+    overflow: hidden;
+    background: white;
+    transition: 0.2s;
+    position: relative;
+}
+
+.event-card:hover {
+    transform: scale(1.03);
+}
+
+.event-card img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+}
+
+.info {
+    padding: 10px;
+}
+.nav-item {
+    display: block;
+    text-decoration: none;
+}
+.nav-item:hover {
+    background: #ede9fe;
+    color: #6c3ef4;
+}
+/* BADGE */
+.badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+    color: white;
+}
+
+.today { background: #ff4d6d; }
+.upcoming { background: #6c3ef4; }
+.past { background: #888; }
+
+/* EMPTY */
+.empty {
+    padding: 10px;
+    color: #666;
+    font-style: italic;
+}
+
+/* CALENDAR */
+.calendar-box {
+    background: #eef0ff;
+    padding: 20px;
+    border-radius: 16px;
+}
+
+/* MOBILE */
+@media(max-width: 900px){
+    .main-grid{
+        grid-template-columns: 1fr;
+    }
+    .event-grid{
+        grid-template-columns: 1fr;
+    }
+    .content{
+        margin-left: 0;
+    }
+    .sidebar{
+        position: relative;
+        width: 100%;
+        height: auto;
+        display: flex;
+        overflow-x: auto;
+    }
+}
+
+</style>
 </head>
+
 <body>
 
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <h3 class="text-center mb-4">CMR University</h3>
-        <a href="/">Dashboard</a>
-        <a href="/settings">Profile</a>
-        {% if role == 'admin' %}
-        <a href="#addEvent" data-bs-toggle="modal">Add Event</a>
-        {% endif %}
-        <a href="/logout">Logout</a>
-    </div>
+<div class="sidebar">
+    <div class="logo">Home</div>
 
-    <!-- Main Content -->
-    <div class="content">
-        <!-- Top Navbar -->
-        <div class="navbar-custom">
-            <div class="fs-4 fw-bold">Dashboard</div>
-            <div class="dropdown">
-                <img src="{{ user.photo if user.photo else 'https://i.pravatar.cc/150?img=3' }}"
-                     class="profile-img dropdown-toggle"
-                     id="profileDropdown"
-                     data-bs-toggle="dropdown"
-                     aria-expanded="false">
+    <a class="nav-item {% if active_page == 'dashboard' %}active{% endif %}" href="/">
+        Dashboard
+    </a>
 
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                    <li><a class="dropdown-item" href="/settings">Edit Profile</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="/logout">Logout</a></li>
-                </ul>
-            </div>
-        </div>
+    <a class="nav-item {% if active_page == 'profile' %}active{% endif %}" href="/settings">
+        Profile
+    </a>
 
-        <!-- College Banner -->
-        <img src="https://cmr.edu.in/blog/wp-content/uploads/2024/11/History-of-CMR.webp" alt="College Banner" class="college-banner">
-
-        <!-- Event Cards -->
-        <div class="row">
-            {% for e in events %}
-            <div class="col-md-4 mb-4">
-                <div class="card event-card">
-                    <img src="{{ e.image }}" alt="{{ e.name }}">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ e.name }}</h5>
-                        <p class="card-text">{{ e.description }}</p>
-                        <p class="card-text"><strong>Date:</strong> {{ e.date }} <strong>Time:</strong> {{ e.time }}</p>
-                        <p class="card-text"><strong>Location:</strong> {{ e.location }}</p>
-
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="badge bg-primary">Likes: {{ e.likes }}</span>
-                            <div>
-                                <a href="/like/{{ e.id }}" class="btn btn-like btn-sm">Like ❤️</a>
-                                {% if role == 'admin' %}
-                                <a href="/delete/{{ e.id }}" class="btn btn-delete btn-sm">Delete</a>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-
-            {% if events|length == 0 %}
-            <div class="col-12">
-                <div class="alert alert-info">No events added yet.</div>
-            </div>
-            {% endif %}
-        </div>
-    </div>
-
-    <!-- Add Event Modal (Admin Only) -->
     {% if role == 'admin' %}
-    <div class="modal fade" id="addEvent" tabindex="-1" aria-labelledby="addEventLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <form action="/add" method="POST" class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="addEventLabel">Add New Event</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <div class="mb-3">
-              <label>Name</label>
-              <input type="text" class="form-control" name="name" required>
-            </div>
-            <div class="mb-3">
-              <label>Date</label>
-              <input type="date" class="form-control" name="date" required>
-            </div>
-            <div class="mb-3">
-              <label>Time</label>
-              <input type="time" class="form-control" name="time" required>
-            </div>
-            <div class="mb-3">
-              <label>Location</label>
-              <input type="text" class="form-control" name="location" required>
-            </div>
-            <div class="mb-3">
-              <label>Image URL</label>
-              <input type="text" class="form-control" name="image" required>
-            </div>
-            <div class="mb-3">
-              <label>Description</label>
-              <textarea class="form-control" name="description" rows="3" required></textarea>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="submit" class="btn btn-primary">Add Event</button>
-          </div>
-        </form>
-      </div>
-    </div>
+    <div class="nav-item" onclick="openModal()">+ Add Event</div>
     {% endif %}
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <a class="nav-item" href="/logout">
+        Logout
+    </a>
+</div>
+
+<div class="content">
+
+    <div class="header">
+        <h2>Welcome back, {{ user.name }}</h2>
+    </div>
+
+    <div class="main-grid">
+
+        <div class="events">
+
+            <!-- TODAY -->
+            <div class="section-title">Today</div>
+            <div class="event-grid">
+
+                {% set ns_today = namespace(count=0) %}
+
+                {% for e in events if e.date == today %}
+                    {% set ns_today.count = ns_today.count + 1 %}
+
+                    <div class="event-card"
+                    {% if role == 'admin' %}
+                    onclick="openEditModal({{ e.id }}, '{{ e.name }}', '{{ e.date }}', '{{ e.time }}', '{{ e.location }}', '{{ e.description }}')"
+                    {% endif %}>
+
+                        <span class="badge today">Today</span>
+                        <img src="{{ e.image }}">
+                        <div class="info">
+                            <strong>{{ e.name }}</strong>
+                            <p>{{ e.date }} - {{ e.time }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            {% if ns_today.count == 0 %}
+                <div class="empty">No events for today</div>
+            {% endif %}
+
+            <!-- UPCOMING -->
+            <div class="section-title">Upcoming</div>
+            <div class="event-grid">
+
+                {% set ns_up = namespace(count=0) %}
+
+                {% for e in events if e.date > today %}
+                    {% set ns_up.count = ns_up.count + 1 %}
+
+                    <div class="event-card"
+                    {% if role == 'admin' %}
+                    onclick="openEditModal({{ e.id }}, '{{ e.name }}', '{{ e.date }}', '{{ e.time }}', '{{ e.location }}', '{{ e.description }}')"
+                    {% endif %}>
+
+                        <span class="badge upcoming">Upcoming</span>
+                        <img src="{{ e.image }}">
+                        <div class="info">
+                            <strong>{{ e.name }}</strong>
+                            <p>{{ e.date }} - {{ e.time }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            {% if ns_up.count == 0 %}
+                <div class="empty">No upcoming events</div>
+            {% endif %}
+
+            <!-- PAST -->
+            <div class="section-title">Past Events</div>
+            <div class="event-grid">
+
+                {% set ns_past = namespace(count=0) %}
+
+                {% for e in events if e.date < today %}
+                    {% set ns_past.count = ns_past.count + 1 %}
+
+                    <div class="event-card"
+                    {% if role == 'admin' %}
+                    onclick="openEditModal({{ e.id }}, '{{ e.name }}', '{{ e.date }}', '{{ e.time }}', '{{ e.location }}', '{{ e.description }}')"
+                    {% endif %}>
+
+                        <span class="badge past">Past</span>
+                        <img src="{{ e.image }}">
+                        <div class="info">
+                            <strong>{{ e.name }}</strong>
+                            <p>{{ e.date }} - {{ e.time }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            {% if ns_past.count == 0 %}
+                <div class="empty">No past events</div>
+            {% endif %}
+
+        </div>
+
+        <!-- CALENDAR -->
+        <div class="calendar-box">
+            <h4>Calendar</h4>
+            <div id="calendar"></div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+/* FULLCALENDAR */
+document.addEventListener('DOMContentLoaded', function () {
+    var calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
+        initialView: 'dayGridMonth',
+        editable: true,
+        height: "auto",
+        events: [
+            {% for e in events %}
+            { title: "{{ e.name }}", start: "{{ e.date }}" },
+            {% endfor %}
+        ],
+
+        eventDrop: function(info){
+            alert("Event moved to: " + info.event.start.toISOString());
+        }
+    });
+
+    calendar.render();
+});
+
+/* MODALS */
+function openModal(){
+    document.getElementById("modal").style.display = "flex";
+}
+
+function openEditModal(id, name, date, time, location, desc){
+    document.getElementById("editForm").action = "/edit/" + id;
+}
+
+</script>
+
 </body>
 </html>

@@ -1,24 +1,24 @@
 {
-  "events": [
-    {
-      "id": 1,
-      "name": "Tech Fest 2026",
-      "date": "2026-04-10",
-      "time": "10:00",
-      "location": "Auditorium",
-      "description": "Annual college technology fest.",
-      "image": "https://images.unsplash.com/photo-1511578314322-379afb476865",
-      "likes": 0
-    },
-    {
-      "id": 2,
-      "name": "Cultural Night",
-      "date": "2026-04-15",
-      "time": "18:00",
-      "location": "Open Stage",
-      "description": "Dance, music and performances by students.",
-      "image": "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f",
-      "likes": 0
-    }
-  ]
+    "events": [
+        {
+            "id": 1,
+            "name": "Tech Fest 2026",
+            "date": "2026-04-10",
+            "time": "10:00 AM",
+            "location": "Auditorium",
+            "description": "Annual college technology fest.",
+            "image": "/static/uploads/1775379580_pexels-pixabay-36717.jpg",
+            "likes": 0
+        },
+        {
+            "id": 2,
+            "name": "Cultural Night",
+            "date": "2026-04-15",
+            "time": "18:00",
+            "location": "Open Stage",
+            "description": "Dance, music and performances by students.",
+            "image": "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f",
+            "likes": 0
+        }
+    ]
 }
