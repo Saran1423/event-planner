@@ -8,8 +8,10 @@ from PIL import Image
 app = Flask(__name__)
 app.secret_key = "secret123"
 
-USERS_FILE = "users.json"
-EVENTS_FILE = "events.json"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+USERS_FILE = os.path.join(BASE_DIR, "users.json")
+EVENTS_FILE = os.path.join(BASE_DIR, "events.json")
 
 UPLOAD_FOLDER = "static/uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -22,7 +24,8 @@ def load_users():
     return json.load(open(USERS_FILE))
 
 def save_users(data):
-    json.dump(data, open(USERS_FILE, "w"), indent=4)
+    with open(USERS_FILE, "w") as f:
+        json.dump(data, f, indent=4)
 
 def load_events():
     if not os.path.exists(EVENTS_FILE):
@@ -30,7 +33,9 @@ def load_events():
     return json.load(open(EVENTS_FILE))
 
 def save_events(data):
-    json.dump(data, open(EVENTS_FILE, "w"), indent=4)
+    with open(EVENTS_FILE, "w") as f:
+        json.dump(data, f, indent=4)
+    
 
 def to_12hr(time_str):
     if not time_str:

@@ -2,13 +2,30 @@
     "events": [
         {
             "id": 2,
-            "name": "Cultural Night",
-            "date": "2026-04-15",
-            "time": "18:00",
-            "location": "Open Stage",
-            "description": "Dance, music and performances by students.",
-            "image": "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f",
-            "likes": 0
+            "name": "Dance Event",
+            "date": "2026-04-06",
+            "time": "12:00 PM",
+            "location": "Auditorium",
+            "description": "Everyone should join this event.",
+            "image": "/static/uploads/1775456115_cmr.jpeg"
+        },
+        {
+            "id": 3,
+            "name": "Hackathon",
+            "date": "2026-04-16",
+            "time": "10:00 AM",
+            "location": "Auditorium",
+            "description": "Hackathon event is coducted only for second year and third year students.\r\nWinners will be rewarded with amazing gifts and prizes.",
+            "image": "/static/uploads/1775456233_bnnr.jpg"
+        },
+        {
+            "id": 4,
+            "name": "Literature Club Event",
+            "date": "2026-04-06",
+            "time": "03:00 PM",
+            "location": "Literature Club",
+            "description": "Literature club event",
+            "image": "/static/uploads/1775457421_patrick-schneider-mdtYgoLsfNk-unsplash.jpg"
         }
     ]
 }

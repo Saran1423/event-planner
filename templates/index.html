@@ -78,7 +78,7 @@ body {
 
 /* EVENTS */
 .events {
-    background: #eef0ff;
+    background: #c8ffca;
     padding: 20px;
     border-radius: 16px;
 }
@@ -150,9 +150,18 @@ body {
 
 /* CALENDAR */
 .calendar-box {
-    background: #eef0ff;
+    background: #cdd2ff;
     padding: 20px;
     border-radius: 16px;
+    height : 550px;
+    overflow: hidden;
+    
+}
+#calendar {
+    height: 100%;
+}
+.fc-scroller {
+    overflow-y: auto !important;
 }
 /* MOBILE STYLE MODAL CARD */
 .modal-card {
@@ -337,6 +346,13 @@ body {
                         <div class="info">
                             <strong>{{ e.name }}</strong>
                             <p>{{ e.date }} - {{ e.time }}</p>
+                             <p style="margin:4px 0; font-size:20px; color:#000000;">
+                                 📌{{ e.location }}
+                            </p>
+
+                            <p style="margin:4px 0; font-size:16px; color:#777;">
+                                👉 {{ e.description }}
+                            </p>
                         </div>
                     </div>
                 {% endfor %}
@@ -365,6 +381,13 @@ body {
                         <div class="info">
                             <strong>{{ e.name }}</strong>
                             <p>{{ e.date }} - {{ e.time }}</p>
+                             <p style="margin:4px 0; font-size:20px; color:#000000;">
+                                 📌{{ e.location }}
+                            </p>
+
+                            <p style="margin:4px 0; font-size:16px; color:#777;">
+                                👉 {{ e.description }}
+                            </p>
                         </div>
                     </div>
                 {% endfor %}
@@ -425,17 +448,7 @@ let eventsData = [];
 /* INIT CALENDAR */
 document.addEventListener('DOMContentLoaded', function () {
 
-    {% for e in events %}
-    eventsData.push({
-        id: {{ e.id }},
-        name: "{{ e.name }}",
-        date: "{{ e.date }}",
-        time: "{{ e.time }}",
-        location: "{{ e.location }}",
-        description: "{{ e.description }}",
-        image: "{{ e.image }}"
-    });
-    {% endfor %}
+    eventsData = {{ events | tojson }};
 
     renderCalendar();
 });
@@ -446,7 +459,9 @@ function renderCalendar(){
 
     var calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
         initialView: 'dayGridMonth',
-        height: "auto",
+        height: 500,
+        contentHeight :450,
+        expandRows : true,
         events: eventsData.map(e => ({
             title: e.name,
             start: e.date

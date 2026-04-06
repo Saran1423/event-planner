@@ -17,6 +17,24 @@
             "branch": "cse",
             "section": "b",
             "photo": ""
+        },
+        {
+            "username": "saran123",
+            "password": "saran12345",
+            "role": "student",
+            "name": "Saran Kumar R",
+            "branch": "CSE",
+            "section": "C",
+            "photo": ""
+        },
+        {
+            "username": "Sujith123",
+            "password": "sujith123",
+            "role": "student",
+            "name": "Sujith Reddy",
+            "branch": "CSE",
+            "section": "D",
+            "photo": ""
         }
     ]
 }
